@@ -1,0 +1,140 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link type="text/css" rel="stylesheet" href="{% static 'assets/css/annotorious.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
+<script type="text/javascript" src="{% static 'assets/annotorious.min.js' %}"></script>
+
+
+
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    $.ajax({
+      url: "http://127.0.0.1:8000/api/annotate/?format=json",
+      type: 'GET',
+      crossDomain: true,
+      dataType: 'json',        
+      success: function(data) { 
+      sessionStorage.setItem('data1', JSON.stringify(data));
+      var obj = JSON.parse(sessionStorage.data1);
+      var data1 = obj
+             
+          for(i in data1){
+            var myAnnotation = {
+                id : data1[i].id,
+                src : data1[i].src,
+                text : data1[i].text,
+                shapes : [{
+                    type : data1[i].shape_type,
+                    geometry : { x : data1[i].x, y: data1[i].y, width : data1[i].width, height: data1[i].height }
+                }]
+            }
+            anno.addAnnotation(myAnnotation)
+          }
+        },
+      error: function(e) {          
+        console.log(e.message);
+      }
+  });
+  
+});
+
+  $(document).ready(function(){
+    var val = $("#annotate-image").width()
+    $("#50perc").click(function(){
+        
+        $('#annotate-div').css('zoom', '50%');
+
+
+
+    });
+
+    $("#original").click(function(){
+        
+        $('#annotate-div').css('zoom', '100%');
+
+        
+
+    });
+
+    $("#150perc").click(function(){
+        
+        $('#annotate-div').css('zoom', '150%');
+
+        
+
+    });
+});
+
+</script>
+
+</head>
+<body>
+
+
+<button id="50perc" type="button">50%</button>
+<button id="original" type="button">Original</button>
+<button id="150perc" type="button">150%</button>
+
+
+<br/>
+
+<div id='annotate-div'><img  id="annotate-image" width='500px' height="500px" src="http://media.indiatimes.in/media/content/2015/Nov/delhi_1447758195.png" class="annotatable">
+</div>
+
+</body>
+
+<script type="text/javascript">
+	
+ 
+
+	anno.addHandler('onAnnotationCreated', function(annotation) {
+
+		src = annotation.src
+		text = annotation.text
+		type = annotation.shapes[0].type
+		x = annotation.shapes[0].geometry.x.toFixed(2);
+		y = annotation.shapes[0].geometry.y.toFixed(2);
+		width = annotation.shapes[0].geometry.width.toFixed(2);
+		height = annotation.shapes[0].geometry.height.toFixed(2);
+		console.log(src)
+		console.log(type)
+		console.log(text)
+		console.log(x)
+
+		var data={
+        'src': src,
+        'text':text,
+        'shape_type':type,
+        'x':x,
+        'y':y,
+        'width':width,
+        'height':height
+           };
+
+   data = (JSON.stringify(data));
+
+   $.ajax({
+    url: "http://127.0.0.1:8000/api/annotate/create/",
+    type: "POST",
+     data:data,
+    contentType: "application/json",
+    success: function (data) {
+        alert("Saved")
+    },
+    error: function(e) {          
+        console.log(e.message);
+      }
+});
+
+	   	
+	
+});
+
+</script>
+
+</html>
