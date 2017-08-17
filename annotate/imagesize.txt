@@ -1,0 +1,40 @@
+$(document).ready(function(){
+    var val = $("#annotate-image").width()
+    $("#50perc").click(function(){
+        img = $("#annotate-image")
+        img.width(0.5*val)
+        img.height(0.5*val)
+
+
+        var obj = JSON.parse(sessionStorage.data1);
+        var data1 = obj
+        anno.removeAll()
+        for(i in data1){
+
+          var myAnnotation = {
+                id : data1[i].id,
+                src : data1[i].src,
+                text : data1[i].text,
+                shapes : [{
+                    type : data1[i].shape_type,
+                    geometry : { x : data1[i].x, y: data1[i].y, width : 0.5*data1[i].width, height: 0.5*data1[i].height }
+                }]
+        }
+        console.log(myAnnotation)
+        anno.addAnnotation(myAnnotation)
+
+      }
+
+
+        });
+    
+    $("#original").click(function(){
+        img = $("#annotate-image")
+        img.width(val)
+        img.he(val)
+    });
+    $("#150perc").click(function(){
+        img = $("#annotate-image")
+        img.width(1.5*val)
+    });
+});
